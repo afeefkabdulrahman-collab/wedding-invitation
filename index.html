@@ -8,43 +8,47 @@
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <title>Afeef & Nada Wedding</title>
+    <title>Afeef & Nada Reception</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Inter:wght@300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Amiri&display=swap');
         
-        body { font-family: 'Inter', sans-serif; background-color: #061a14; overflow-x: hidden; }
-        .font-serif-elegant { font-family: 'Cinzel', serif; }
-        .font-cursive { font-family: 'Great Vibes', cursive; }
-
-        .bg-pattern {
-            background-color: #061a14;
-            background-image: url("https://www.transparenttextures.com/patterns/dark-matter.png");
+        body { 
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        .gold-gradient-text {
-            background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+        .font-serif-elegant { font-family: 'Cinzel', serif; }
+        .font-cursive { font-family: 'Great Vibes', cursive; }
+        .font-arabic { font-family: 'Amiri', serif; }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+        }
+
+        .gold-text {
+            background: linear-gradient(to bottom, #c5a059, #8e6d2f);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .gold-border {
-            border: 2px solid transparent;
-            border-image: linear-gradient(to bottom right, #bf953f, #fcf6ba, #aa771c) 1;
+        .petal {
+            position: absolute; pointer-events: none;
+            background: #fff; border-radius: 0 50% 0 50%;
+            opacity: 0.3; animation: fall 15s infinite linear;
         }
-
-        .flower {
-            position: absolute; opacity: 0.2; pointer-events: none;
-            filter: sepia(1) saturate(2) hue-rotate(10deg);
-            animation: float 25s infinite linear;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(-1200px) rotate(360deg); }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
         }
     </style>
 </head>
-<body class="bg-pattern text-white">
+<body>
     <div id="root"></div>
 
     <script type="text/babel">
@@ -55,37 +59,36 @@
             const [status, setStatus] = useState('attending');
             const [guestCount, setGuestCount] = useState(1);
             const [name, setName] = useState('');
-            const weddingDate = new Date("2026-06-21T00:00:00");
-            const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, mins: 0, secs: 0 });
+            
+            // June 21, 2026 @ 6:00 PM
+            const weddingDate = new Date("2026-06-21T18:00:00");
+            const [timeLeft, setTimeLeft] = useState({ days: 0, hrs: 0, mins: 0, secs: 0 });
 
-            // Links - UPDATE THESE
+            // Links - UPDATED
             const mapUrl = "https://maps.google.com/?q=J+%26+R+Convention+Center"; 
-            const whatsappUrl = "https://wa.me/971565567150?text=Salam!%20Regarding%20the%20wedding%20of%20Afeef%20%26%20Nada...";
+            const whatsappUrl = "https://wa.me/971565567150";
+            
+            // Google Calendar Link: June 21, 2026, 6pm to 9pm (18:00 to 21:00)
+            const calendarUrl = "https://www.google.com/calendar/render?action=TEMPLATE&text=Reception+Ceremony:+Afeef+%26+Nada&dates=20260621T180000/20260621T210000&details=We+invite+you+to+celebrate+the+wedding+reception+of+Afeef+and+Nada.&location=J+%26+R+Convention+Center";
 
             const handleRSVPSubmit = (e) => {
                 e.preventDefault();
                 if (status === 'attending') {
-                    confetti({
-                        particleCount: 150,
-                        spread: 70,
-                        origin: { y: 0.6 },
-                        colors: ['#bf953f', '#fcf6ba', '#aa771c']
-                    });
-                    alert(`Congratulations ${name}! We look forward to seeing you! 🥂`);
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#c5a059', '#e8d2a6'] });
+                    alert(`We look forward to seeing you, ${name}!`);
                 } else {
-                    alert(`Thank you for letting us know, ${name}. Please include us in your prayers! 🤲`);
+                    alert(`Thank you, ${name}. We appreciate your prayers! 🤲`);
                 }
                 setView('invite');
             };
 
             useEffect(() => {
                 const timer = setInterval(() => {
-                    const now = new Date();
-                    const diff = weddingDate - now;
+                    const diff = weddingDate - new Date();
                     if (diff > 0) {
                         setTimeLeft({
                             days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-                            hours: Math.floor((diff / (1000 * 60 * 60)) % 24),
+                            hrs: Math.floor((diff / (1000 * 60 * 60)) % 24),
                             mins: Math.floor((diff / (1000 * 60)) % 60),
                             secs: Math.floor((diff / 1000) % 60)
                         });
@@ -95,101 +98,91 @@
             }, []);
 
             return (
-                <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-                    
-                    {/* Floating Floral Elements */}
-                    <img src="https://cdn-icons-png.flaticon.com/512/2926/2926331.png" className="flower w-24" style={{left: '5%', bottom: '-150px'}} />
-                    <img src="https://cdn-icons-png.flaticon.com/512/2926/2926331.png" className="flower w-32" style={{right: '8%', bottom: '-250px', animationDelay: '7s'}} />
+                <div className="min-h-screen flex items-center justify-center p-6 relative">
+                    {[...Array(12)].map((_, i) => (
+                        <div key={i} className="petal" style={{
+                            width: Math.random() * 15 + 10 + 'px',
+                            height: Math.random() * 15 + 10 + 'px',
+                            left: Math.random() * 100 + '%',
+                            animationDelay: Math.random() * 15 + 's',
+                            background: i % 2 === 0 ? '#ffe4e6' : '#fff'
+                        }} />
+                    ))}
 
-                    <div className="relative z-10 w-full max-w-lg bg-black/60 backdrop-blur-2xl gold-border rounded-sm shadow-2xl p-8 text-center">
-                        
-                        {/* Tab Navigation */}
-                        <div className="inline-flex border border-gold-700/30 p-1 mb-10">
-                            <button onClick={() => setView('invite')} className={`px-8 py-2 text-[10px] font-bold tracking-widest uppercase transition-all ${view === 'invite' ? 'bg-[#aa771c] text-black' : 'text-amber-200/60'}`}>Invitation</button>
-                            <button onClick={() => setView('rsvp')} className={`px-8 py-2 text-[10px] font-bold tracking-widest uppercase transition-all ${view === 'rsvp' ? 'bg-[#aa771c] text-black' : 'text-amber-200/60'}`}>RSVP</button>
+                    <div className="w-full max-w-lg glass-panel rounded-[3rem] p-10 text-center relative z-10">
+                        <div className="flex justify-center gap-8 mb-10 text-[10px] tracking-[0.2em] font-bold uppercase text-gray-400">
+                            <button onClick={() => setView('invite')} className={view === 'invite' ? 'text-gray-900 border-b border-gold-500 pb-1' : ''}>The Invite</button>
+                            <button onClick={() => setView('rsvp')} className={view === 'rsvp' ? 'text-gray-900 border-b border-gold-500 pb-1' : ''}>RSVP</button>
                         </div>
 
                         {view === 'invite' ? (
-                            <div className="space-y-8 animate-in fade-in zoom-in duration-1000">
-                                <div className="text-amber-200/70 tracking-[0.6em] text-[10px] font-bold uppercase mb-4">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْم</div>
+                            <div className="animate-in fade-in duration-1000">
+                                <div className="font-arabic text-4xl gold-text mb-6">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْم</div>
                                 
-                                <h1 className="font-serif-elegant text-5xl gold-gradient-text leading-tight">Afeef & Nada</h1>
-                                <p className="font-cursive text-3xl text-amber-100/60">The Wedding Celebration</p>
+                                <h1 className="font-serif-elegant text-4xl text-gray-800 mb-2">Afeef & Nada</h1>
+                                <p className="font-cursive text-3xl text-gray-500 mb-8">Reception Ceremony</p>
                                 
-                                <div className="grid grid-cols-4 gap-3">
+                                <div className="flex justify-center gap-6 mb-10 text-gray-600">
                                     {Object.entries(timeLeft).map(([label, val]) => (
-                                        <div key={label} className="border border-amber-900/40 bg-white/5 py-4">
-                                            <div className="text-2xl font-bold text-amber-200">{val}</div>
-                                            <div className="text-[8px] uppercase text-amber-500/80 font-bold tracking-widest">{label}</div>
+                                        <div key={label}>
+                                            <div className="text-xl font-light">{val}</div>
+                                            <div className="text-[8px] uppercase tracking-widest opacity-60">{label}</div>
                                         </div>
                                     ))}
                                 </div>
 
-                                <div className="py-6 border-y border-amber-900/30 space-y-4">
-                                    <div className="text-amber-100 text-sm tracking-widest font-light">
-                                        <span className="block text-[9px] uppercase text-amber-600 font-bold mb-1">When</span>
-                                        JUNE 21, 2026
-                                    </div>
-                                    <div className="text-amber-100 text-sm tracking-widest font-light">
-                                        <span className="block text-[9px] uppercase text-amber-600 font-bold mb-1">Where</span>
-                                        J & R CONVENTION CENTER
-                                    </div>
+                                <div className="space-y-1 mb-10 text-gray-700 text-sm tracking-wide">
+                                    <p className="font-semibold text-gray-900">JUNE 21, 2026</p>
+                                    <p>6:00 PM — 9:00 PM</p>
+                                    <p className="opacity-80">J & R CONVENTION CENTER</p>
                                 </div>
 
-                                <div className="space-y-4">
-                                    <button onClick={() => setView('rsvp')} className="w-full py-4 bg-gradient-to-r from-[#bf953f] via-[#fcf6ba] to-[#aa771c] text-black font-black uppercase tracking-[0.2em] text-[10px] shadow-lg hover:brightness-110 transition">
-                                        RSVP Now
-                                    </button>
-                                    <div className="flex gap-3">
-                                        <a href={mapUrl} target="_blank" className="flex-1 py-3 border border-amber-700/50 text-amber-200 text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-amber-900/20">
-                                            📍 Location
-                                        </a>
-                                        <a href={whatsappUrl} target="_blank" className="flex-1 py-3 border border-amber-700/50 text-amber-200 text-[9px] font-bold uppercase tracking-widest flex items-center justify-center gap-2 hover:bg-amber-900/20">
-                                            💬 WhatsApp
-                                        </a>
-                                    </div>
+                                <div className="flex justify-center gap-10 mb-10">
+                                    <a href={mapUrl} target="_blank" className="group flex flex-col items-center gap-2">
+                                        <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white/60 group-hover:bg-white transition-all shadow-sm">📍</div>
+                                        <span className="text-[9px] uppercase tracking-widest text-gray-400">Location</span>
+                                    </a>
+                                    <a href={calendarUrl} target="_blank" className="group flex flex-col items-center gap-2">
+                                        <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white/60 group-hover:bg-white transition-all shadow-sm">📅</div>
+                                        <span className="text-[9px] uppercase tracking-widest text-gray-400">Calendar</span>
+                                    </a>
+                                    <a href={whatsappUrl} target="_blank" className="group flex flex-col items-center gap-2">
+                                        <div className="w-12 h-12 flex items-center justify-center rounded-full bg-white/60 group-hover:bg-white transition-all shadow-sm">💬</div>
+                                        <span className="text-[9px] uppercase tracking-widest text-gray-400">WhatsApp</span>
+                                    </a>
                                 </div>
+
+                                <button onClick={() => setView('rsvp')} className="w-full py-4 rounded-full border border-gray-200 text-gray-800 text-xs font-bold uppercase tracking-widest hover:bg-white/50 transition shadow-sm">
+                                    Confirm Your Attendance
+                                </button>
                             </div>
                         ) : (
-                            <form onSubmit={handleRSVPSubmit} className="space-y-6 text-left animate-in slide-in-from-bottom duration-500">
-                                <h2 className="font-serif-elegant text-3xl gold-gradient-text text-center">RSVP</h2>
-                                
-                                <div className="space-y-5">
-                                    <div>
-                                        <label className="block text-[9px] uppercase text-amber-600 font-bold mb-2 tracking-widest">Full Name</label>
-                                        <input required type="text" value={name} onChange={e => setName(e.target.value)} className="w-full bg-white/5 border border-amber-900/50 p-3 text-amber-100 outline-none focus:border-amber-400" />
-                                    </div>
+                            <form onSubmit={handleRSVPSubmit} className="animate-in slide-in-from-bottom duration-500">
+                                <h2 className="font-serif-elegant text-2xl text-gray-800 mb-8">RSVP</h2>
+                                <input required type="text" value={name} onChange={e => setName(e.target.value)} placeholder="Your Name" className="w-full bg-transparent border-b border-gray-200 py-3 mb-8 outline-none text-center text-gray-800 focus:border-gold-500 transition-colors" />
 
-                                    <div className="flex gap-2">
-                                        <button type="button" onClick={() => setStatus('attending')} className={`flex-1 py-3 text-[9px] font-bold uppercase border tracking-widest transition ${status === 'attending' ? 'bg-amber-600 text-black border-amber-600' : 'border-amber-900 text-amber-600'}`}>Attending</button>
-                                        <button type="button" onClick={() => setStatus('not_attending')} className={`flex-1 py-3 text-[9px] font-bold uppercase border tracking-widest transition ${status === 'not_attending' ? 'bg-red-900/50 text-white border-red-900' : 'border-amber-900 text-amber-600'}`}>Not Attending</button>
-                                    </div>
-
-                                    {status === 'attending' ? (
-                                        <div className="bg-white/5 p-5 border border-amber-900/40 text-center animate-in fade-in duration-300">
-                                            <label className="block text-[9px] uppercase text-amber-600 font-bold mb-3 tracking-widest">Number of Guests</label>
-                                            <div className="flex items-center justify-center gap-8">
-                                                <button type="button" onClick={() => setGuestCount(Math.max(1, guestCount-1))} className="text-amber-200 text-3xl">-</button>
-                                                <span className="text-3xl font-serif text-amber-100">{guestCount}</span>
-                                                <button type="button" onClick={() => setGuestCount(guestCount+1)} className="text-amber-200 text-3xl">+</button>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="p-6 border-2 border-dotted border-amber-900/50 text-center animate-in zoom-in duration-300">
-                                            <p className="text-amber-200/80 italic font-serif text-sm">"Include us in your prayers 🤲"</p>
-                                        </div>
-                                    )}
-
-                                    <button type="submit" className="w-full py-4 bg-gradient-to-r from-[#bf953f] via-[#fcf6ba] to-[#aa771c] text-black font-black uppercase tracking-[0.2em] text-[10px]">
-                                        Submit Response
-                                    </button>
-                                    
-                                    <button type="button" onClick={() => setView('invite')} className="w-full text-center text-[9px] text-amber-600 uppercase tracking-widest underline decoration-amber-900 underline-offset-4">Back to Invitation</button>
+                                <div className="flex justify-center gap-10 mb-10">
+                                    <button type="button" onClick={() => setStatus('attending')} className={`text-[10px] uppercase tracking-widest font-bold ${status === 'attending' ? 'text-gray-900 border-b border-gray-900' : 'text-gray-400'}`}>Attending</button>
+                                    <button type="button" onClick={() => setStatus('not_attending')} className={`text-[10px] uppercase tracking-widest font-bold ${status === 'not_attending' ? 'text-gray-900 border-b border-gray-900' : 'text-gray-400'}`}>Not attending</button>
                                 </div>
+
+                                {status === 'attending' ? (
+                                    <div className="flex items-center justify-center gap-8 mb-10">
+                                        <button type="button" onClick={() => setGuestCount(Math.max(1, guestCount-1))} className="text-2xl text-gray-300">-</button>
+                                        <div className="text-center">
+                                            <span className="text-2xl text-gray-800">{guestCount}</span>
+                                            <p className="text-[8px] uppercase text-gray-400">Attendees</p>
+                                        </div>
+                                        <button type="button" onClick={() => setGuestCount(guestCount+1)} className="text-2xl text-gray-300">+</button>
+                                    </div>
+                                ) : (
+                                    <p className="italic text-gray-400 mb-10">"Please include us in your prayers" 🤲</p>
+                                )}
+
+                                <button type="submit" className="w-full py-4 bg-gray-900 text-white rounded-full text-xs font-bold uppercase tracking-widest shadow-xl">Submit Response</button>
                             </form>
                         )}
-                        
-                        <p className="mt-10 text-[8px] text-amber-800 font-bold tracking-[0.5em] uppercase border-t border-amber-900/20 pt-4">With Love, Family & Friends</p>
+                        <p className="mt-10 text-[8px] text-gray-300 font-bold tracking-[0.4em] uppercase">With Love, Family & Friends</p>
                     </div>
                 </div>
             );
