@@ -13,7 +13,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Great+Vibes&family=Amiri:wght@400;700&family=Montserrat:wght@300;400;600&display=swap');
         
         body { font-family: 'Montserrat', sans-serif; margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; overflow-x: hidden; }
-
         .font-serif-elegant { font-family: 'Cinzel', serif; }
         .font-cursive { font-family: 'Great Vibes', cursive; }
         .font-arabic { font-family: 'Amiri', serif; }
@@ -38,7 +37,6 @@
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
 
-        /* Oval Icons Styling */
         .icon-oval {
             width: 85px; height: 55px; border-radius: 40px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -72,6 +70,8 @@
             const [status, setStatus] = useState('attending');
             const [guestCount, setGuestCount] = useState(1);
             const [name, setName] = useState('');
+            const [isSubmitting, setIsSubmitting] = useState(false);
+            
             const weddingDate = new Date("2026-06-21T18:00:00");
             const [timeLeft, setTimeLeft] = useState({ DAYS: 0, HRS: 0, MINS: 0, SECS: 0 });
 
@@ -79,11 +79,38 @@
             const whatsappUrl = "https://wa.me/971565567150";
             const calendarUrl = "https://www.google.com/calendar/render?action=TEMPLATE&text=Reception:+Afeef+%26+Nada&dates=20260621T180000/20260621T210000&location=J+%26+R+Convention+Center";
 
-            const handleRSVPSubmit = (e) => {
+            const handleRSVPSubmit = async (e) => {
                 e.preventDefault();
-                confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#bf953f', '#fcf6ba'] });
-                alert(status === 'attending' ? `See you there, ${name}!` : `Thank you for your prayers, ${name}.`);
-                setView('invite');
+                setIsSubmitting(true);
+                
+                // 🛑 PASTE YOUR GOOGLE SCRIPT WEB APP URL BELOW 🛑
+                const scriptURL = 'https://script.google.com/macros/s/AKfycbxJfMD0LB5ug7coli3yrtrgIIGVvyjmnRJJd8-PjPAMWToivhKwytnylp1hAmKEoJd8/exec';
+
+                const responseData = {
+                    name: name,
+                    status: status,
+                    guests: status === 'attending' ? guestCount : 0
+                };
+
+                try {
+                    await fetch(scriptURL, {
+                        method: 'POST',
+                        mode: 'no-cors', 
+                        body: JSON.stringify(responseData),
+                        headers: { 'Content-Type': 'application/json' }
+                    });
+
+                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#bf953f', '#fcf6ba'] });
+                    alert(`Thank you, ${name}! Your response has been saved.`);
+                    setView('invite');
+                    setName('');
+                    setGuestCount(1);
+                } catch (error) {
+                    console.error('Error!', error.message);
+                    alert("Submission failed. Please try again.");
+                } finally {
+                    setIsSubmitting(false);
+                }
             };
 
             useEffect(() => {
@@ -137,7 +164,7 @@
                                 </div>
 
                                 <div className="text-sm tracking-[0.1em] text-gray-200">
-                                    <p className="font-bold text-white text-lg mb-1">JUNE 21, 2026</p>
+                                    <p className="font-bold text-white text-lg mb-1 uppercase">June 21, 2026</p>
                                     <p>6:00 PM — 9:00 PM</p>
                                     <p className="text-[10px] opacity-60 mt-1 uppercase">J & R Convention Center</p>
                                 </div>
@@ -183,7 +210,9 @@
                                         <p className="italic text-gray-400 text-sm font-light">"Wishing you a lifetime of love and happiness. We'll be there with you in spirit and prayers." 🤲</p>
                                     </div>
                                 )}
-                                <button type="submit" className="w-full py-5 gold-btn rounded-2xl uppercase text-[11px] tracking-[0.2em]">Submit Response</button>
+                                <button type="submit" disabled={isSubmitting} className={`w-full py-5 gold-btn rounded-2xl uppercase text-[11px] tracking-[0.2em] ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                                    {isSubmitting ? 'Saving...' : 'Submit Response'}
+                                </button>
                             </form>
                         )}
                         <p className="mt-10 text-[8px] text-gray-600 font-bold tracking-[0.4em] uppercase pt-4 border-t border-white/5">With Love, Family & Friends</p>
